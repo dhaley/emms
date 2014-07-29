@@ -13,11 +13,13 @@ INFODIR=$(PREFIX)/info
 MAN1DIR=$(PREFIX)/share/man/man1
 SITELISP=$(PREFIX)/share/emacs/site-lisp/emms
 
-INSTALLINFO = /usr/sbin/install-info --info-dir=$(INFODIR)
+GINSTALLINFO = /usr/bin/ginstall-info --info-dir=$(INFODIR)
+# For systems without ginstall-info
+INSTALLINFO = /usr/bin/install-info --info-dir=$(INFODIR)
 CHANGELOG_CMD = git log --pretty=medium --no-merges
 
 # The currently released version of EMMS
-VERSION=3.0
+VERSION=4.0
 
 .PHONY: all install lisp docs deb-install clean
 .PRECIOUS: %.elc
@@ -33,7 +35,7 @@ docs:
 	$(MAKE) -C $(DOCDIR)
 
 emms-print-metadata: $(SRCDIR)/emms-print-metadata.c
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $(SRCDIR)/$@ $< `taglib-config --cflags --libs` -ltag_c
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $(SRCDIR)/$@ $< `taglib-config --cflags --libs` -ltag_c
 
 install:
 	test -d $(SITELISP) || mkdir -p $(SITELISP)
@@ -42,10 +44,18 @@ install:
 	install -m 644 $(ALLCOMPILED) $(SITELISP)
 	install -m 0644 $(DOCDIR)emms.info $(INFODIR)/emms
 	for p in $(MAN1PAGES) ; do $(GZIP) -9c $$p > $(MAN1DIR)/$$p.gz ; done
-	$(INSTALLINFO) emms.info
+	if [ -x /usr/bin/ginstall-info ]; then \
+		$(GINSTALLINFO) $(DOCDIR)emms.info; \
+	else \
+		$(INSTALLINFO) $(DOCDIR)emms.info; \
+	fi
 
 remove-info:
-	$(INSTALLINFO) --remove emms.info
+	if [ -x /usr/bin/ginstall-info ]; then \
+		$(GINSTALLINFO) --remove $(DOCDIR)emms.info; \
+	else \
+		$(INSTALLINFO) --remove $(DOCDIR)emms.info; \
+	fi
 
 ChangeLog:
 	$(CHANGELOG_CMD) > $@
@@ -64,19 +74,7 @@ dist: clean autoloads
 release: dist
 	(cd .. && tar -czf emms-$(VERSION).tar.gz \
 	    emms-$(VERSION) ; \
-	  zip -r emms-$(VERSION).zip emms-$(VERSION) && \
-	  gpg --detach emms-$(VERSION).tar.gz && \
-	  gpg --detach emms-$(VERSION).zip)
+	  gpg --detach emms-$(VERSION).tar.gz)
 
 upload:
-	(cd .. && echo "Directory: emms" | gpg --clearsign > \
-	    emms-$(VERSION).tar.gz.directive.asc && \
-	  cp emms-$(VERSION).tar.gz.directive.asc \
-	    emms-$(VERSION).zip.directive.asc && \
-	  echo open ftp://ftp-upload.gnu.org > upload.lftp ; \
-	  echo cd /incoming/ftp >> upload.lftp ; \
-	  echo mput emms-$(VERSION).zip* >> upload.lftp ; \
-	  echo mput emms-$(VERSION).tar.gz* >> upload.lftp ; \
-	  echo close >> upload.lftp ; \
-	  lftp -f upload.lftp ; \
-	  rm -f upload.lftp)
+	(cd .. && echo "version: 1.2\ndirectory: emms\nfilename: "emms-$(VERSION).tar.gz"\ncomment: version 4.0 of Emms" | gpg --clearsign > emms-$(VERSION).tar.gz.directive.asc && echo open ftp://ftp-upload.gnu.org > upload.lftp ; echo cd /incoming/ftp >> upload.lftp ; echo mput emms-$(VERSION).tar.gz* >> upload.lftp ; echo close >> upload.lftp ; lftp -f upload.lftp ; rm -f upload.lftp)

@@ -52,7 +52,7 @@
 
 (defun emms-info-libtag (track)
   (when (and (eq 'file (emms-track-type track))
-             (string-match 
+             (string-match
               "\\.\\([Mm][Pp]3\\|[oO][gG][gG]\\|[fF][lL][aA][cC]\\|[sS][pP][xX]\\|[Mm]4[Aa]\\|[Aa][Aa][Cc]\\)\\'"
               (emms-track-name track)))
     (with-temp-buffer

@@ -234,7 +234,7 @@ needed info.")
   (use-local-map emms-stream-mode-map)
   (emms-stream-init)
   (set (make-local-variable 'truncate-lines) t)
-  (set (make-local-variable 'automatic-hscrolling) t)
+  (set (make-local-variable 'auto-hscroll-mode) t)
   (set (make-local-variable 'kill-whole-line) t)
   (set (make-local-variable 'next-line-add-newlines) nil)
   (goto-char 1)
@@ -272,11 +272,8 @@ otherwise just remove the special bindings from the stream menu."
   (remove-hook 'emms-pbi-manually-change-song-hook 'emms-pbi-popup-revert)
   (let ((streambuffer (get-buffer emms-stream-buffer-name)))
     (when streambuffer
-      (save-excursion
-	(set-buffer streambuffer)
-	;; (local-unset-key (kbd "q"))
+      (with-current-buffer streambuffer
 	(local-unset-key (kbd "TAB")))))
-        ;; (local-unset-key (kbd "RET")))))
   (when emms-stream-popup-old-conf
     (set-window-configuration emms-stream-popup-old-conf))
   (remove-hook 'emms-stream-play-hook 'emms-stream-popup-revert)

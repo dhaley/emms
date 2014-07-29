@@ -39,6 +39,8 @@
 ;;; User Customization
 
 (require 'emms)
+(require 'dired)
+(require 'locate)
 (eval-when-compile
   (condition-case nil
       (require 'locate)
@@ -289,13 +291,6 @@ files) can play."
   "An EMMS source for streaming playlists (usually URLs ending in .pls)."
   (interactive "sPlay streamlist URL: ")
   (emms-playlist-insert-track (emms-track 'streamlist streamlist)))
-
-;;;###autoload (autoload 'emms-play-lastfm "emms-lastfm" nil t)
-;;;###autoload (autoload 'emms-add-lastfm "emms-lastfm" nil t)
-(define-emms-source lastfm (lastfm-url)
-  "An EMMS source for Last.fm URLs, which begin with lastfm://."
-  (interactive "sPlay Last.fm URL: ")
-  (emms-playlist-insert-track (emms-track 'lastfm lastfm-url)))
 
 
 (provide 'emms-source-file)

@@ -1,8 +1,9 @@
 ;;; emms-player-mpd.el --- MusicPD support for EMMS
 
-;; Copyright (C) 2005, 2006, 2007, 2008, 2009 Free Software Foundation, Inc.
+;; Copyright (C) 2005, 2006, 2007, 2008, 2009, 2014 Free Software Foundation, Inc.
 
-;; Author: Michael Olson <mwolson@gnu.org>
+;; Author: Michael Olson <mwolson@gnu.org>, Jose Antonio Ortega Ruiz
+;; <jao@gnu.org>
 
 ;; This file is part of EMMS.
 
@@ -105,6 +106,8 @@
 (require 'emms-player-simple)
 (require 'emms-source-playlist)  ; for emms-source-file-parse-playlist
 (require 'tq)
+(require 'emms-cache)
+(require 'emms-url)
 
 (eval-when-compile
   (condition-case nil
@@ -128,8 +131,9 @@
 (defcustom emms-player-mpd-music-directory nil
   "The value of 'music_directory' in your MusicPD configuration file.
 
-You need this if your playlists use absolute file names, otherwise
-leave it set to nil."
+Unless your MusicPD is configured to use absolute file names, you must
+set this variable to the value of 'music_directory' in your MusicPD
+config."
   ;; The :format part ensures that entering directories happens on the
   ;; next line, where there is more space to work with
   :type '(choice :format "%{%t%}:\n   %[Value Menu%] %v"
@@ -140,30 +144,45 @@ leave it set to nil."
 (defun emms-player-mpd-get-supported-regexp ()
   "Returns a regexp of file extensions that MusicPD supports,
 or nil if we cannot figure it out."
-  (let ((out (shell-command-to-string "mpd --version"))
-        (found-start nil)
-        (supported nil))
-    ;; Get supported formats
-    ;; New version (0.15.x)
-    (if (string-match "Supported decoders:\\([^0]+?\\)Supported outputs:" out)
-	(setq supported (replace-regexp-in-string "\\[.+?\\]" ""
-						  (match-string 1 out)))
-      ;; Older versions
-      (setq out (split-string out "\n"))
-      (while (car out)
-	(cond ((string= (car out) "Supported formats:")
-	       (setq found-start t))
-	      ((string= (car out) "")
-	       (setq found-start nil))
-	      (found-start
-	       (setq supported (concat supported (car out)))))
-	(setq out (cdr out))))
-    ;; Create regexp
-    (when (and (stringp supported)
-               (not (string= supported "")))
-      (concat "\\`http://\\|\\.\\(m3u\\|pls\\|"
-              (regexp-opt (delq nil (split-string supported)))
-              "\\)\\'"))))
+  (let ((out (shell-command-to-string "mpd --version")))
+    ;; 0.17.x
+    (if (string-match "Decoders plugins:$" out)
+        (let* ((b (match-end 0))
+               (e (string-match "Output plugins:$" out))
+               (plugs (split-string (substring out b e) "\n" t))
+               (plugs (mapcan (lambda (x)
+                                (and (string-match " +\\[.*\\] +\\(.+\\)$" x)
+                                     (split-string (match-string 1 x) nil t)))
+                              plugs))
+               (b (and (string-match "Protocols:$" out) (match-end 0)))
+               (prots (and b (substring out (+ 2 b) -1)))
+               (prots (split-string (or prots "") nil t)))
+          (concat "\\(\\.\\(m3u\\|pls\\|"
+                  (regexp-opt (delq nil plugs))
+                  "\\)\\'\\)\\|\\(\\`"
+                  (regexp-opt (delete "file://" prots)) "\\)"))
+      (let ((found-start nil)
+            (supported nil))
+        (if (string-match "Supported decoders:\\([^0]+?\\)Supported outputs:" out)
+            ;; 0.15.x
+            (setq supported (replace-regexp-in-string "\\[.+?\\]" ""
+                                                      (match-string 1 out)))
+          ;; < 0.15
+          (setq out (split-string out "\n"))
+          (while (car out)
+            (cond ((string= (car out) "Supported formats:")
+                   (setq found-start t))
+                  ((string= (car out) "")
+                   (setq found-start nil))
+                  (found-start
+                   (setq supported (concat supported (car out)))))
+            (setq out (cdr out))))
+        ;; Create regexp
+        (when (and (stringp supported)
+                   (not (string= supported "")))
+          (concat "\\`http://\\|\\.\\(m3u\\|pls\\|"
+                  (regexp-opt (delq nil (split-string supported)))
+                  "\\)\\'"))))))
 
 (defcustom emms-player-mpd-supported-regexp
   ;; Use a sane default, just in case
@@ -1171,6 +1190,14 @@ The track should be an alist as per `emms-player-mpd-get-alist'."
         (emms-info-mpd-process track track-info)
         (funcall emms-cache-set-function 'file name track)))))
 
+(defun emms-cache--info-cleanup (info)
+  (let ((xs (mapcar (lambda (x)
+                      (and (stringp x)
+                           (not (string-match-p "\\`\\(Last-\\|direct\\)" x))
+                           x))
+                    info)))
+    (cons nil (delq nil xs))))
+
 (defun emms-cache-set-from-mpd-directory (dir)
   "Dump all MusicPD data from DIR into the EMMS cache.
 
@@ -1190,11 +1217,18 @@ This is useful to do when you have recently acquired new music."
          nil
          (lambda (closure response)
            (message "Dumping MusicPD data to cache...processing")
-           (let ((info (emms-player-mpd-get-alists
-                        (emms-player-mpd-parse-response response))))
-             (dolist (track-info info)
-               (emms-cache-set-from-mpd-track track-info))
-             (message "Dumping MusicPD data to cache...done")))))
+           (let ((info (emms-player-mpd-parse-response response)))
+             (when (null (car info))
+               (let* ((info (emms-cache--info-cleanup info))
+                      (info (emms-player-mpd-get-alists info))
+                      (track 1)
+                      (total (length info)))
+                 (dolist (track-info info)
+                   (message "Dumping MusicPD data to cache...%d/%d" track total)
+                   (emms-cache-set-from-mpd-track track-info)
+                   (setq track (+ 1 track)))
+                 (message "Dumping MusicPD data to cache... %d tracks processed"
+                          total)))))))
     (error "Caching is not enabled")))
 
 (defun emms-cache-set-from-mpd-all ()

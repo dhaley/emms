@@ -40,7 +40,7 @@
 
 ;;; Code:
 
-(defvar emms-version "3.0"
+(defvar emms-version "4.0"
   "EMMS version string.")
 
 
@@ -78,6 +78,12 @@ for the currently playing track."
   "*Non-nil if the EMMS playlist should automatically repeat.
 If nil, playback will stop when the last track finishes playing.
 If non-nil, EMMS will wrap back to the first track when that happens."
+  :group 'emms
+  :type 'boolean)
+
+(defcustom emms-random-playlist nil
+  "*Non-nil means that tracks are played randomly. If nil, tracks
+are played sequentially."
   :group 'emms
   :type 'boolean)
 
@@ -487,6 +493,17 @@ This uses `emms-playlist-uniq-function'."
     (save-excursion
       (funcall emms-playlist-uniq-function))))
 
+(defun emms-toggle-random-playlist ()
+  "Toggle whether emms plays the tracks randomly or sequentially.
+See `emms-random-playlist'."
+  (interactive)
+  (setq emms-random-playlist (not emms-random-playlist))
+  (if emms-random-playlist
+      (progn (setq emms-player-next-function 'emms-random)
+             (message "Will play the tracks randomly."))
+    (setq emms-player-next-function 'emms-next-noerror)
+    (message "Will play the tracks sequentially.")))
+
 (defun emms-toggle-repeat-playlist ()
   "Toggle whether emms repeats the playlist after it is done.
 See `emms-repeat-playlist'."
@@ -521,6 +538,14 @@ Set `emms-completing-read' to determine which function to use.
 
 See `completing-read' for a description of ARGS."
   (apply emms-completing-read-function args))
+
+(defun emms-display-modes ()
+  "Display the current EMMS play modes."
+  (interactive)
+  (message "repeat playlist: %s, repeat track: %s, random: %s"
+	   (if emms-repeat-playlist "yes" "no")
+	   (if emms-repeat-track "yes" "no")
+	   (if emms-random-playlist "yes" "no")))
 
 
 ;;; Compatibility functions
@@ -722,7 +747,7 @@ for that purpose.")
     (with-current-buffer buf
       (emms-playlist-ensure-playlist-buffer))
     (setq emms-playlist-buffer buf)
-    (when (interactive-p)
+    (when (called-interactively-p 'interactive)
       (message "Set current EMMS playlist buffer"))
     buf))
 
@@ -739,7 +764,7 @@ buffer is also selected."
         (funcall emms-playlist-default-major-mode))
       (setq emms-playlist-buffer-p t))
     (add-to-list 'emms-playlist-buffers buf)
-    (when (interactive-p)
+    (when (called-interactively-p 'interactive)
       (switch-to-buffer buf))
     buf))
 

@@ -17,7 +17,7 @@
 @end direntry
 
 @copying
- @copyright{} 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011
+ @copyright{} 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2014
    Free Software Foundation, Inc.
 @quotation
 Permission is granted to copy, distribute and/or modify this document
@@ -81,9 +81,9 @@ Modules and Extensions
 * Streaming Audio::      Interface to streaming audio.
 * Lyrics::               Displaying lyrics synchronously.
 * Volume::               Changing the volume.
-* Last.fm::              Interact with the Last.fm service.
 * APE / FLAC Commands::  How to play next or previous track in these files.
 * Bookmarks::            Saving a place in a media file.
+* GNU FM::               Connect to music community websites.
 * Extending Emms::       How to define new players and modules.
 
 Copying and license
@@ -114,11 +114,6 @@ The Core File
 
 Track Information
 * Defining Info Methods::    Defining new info methods.
-
-Last.fm
-* Last.fm Setup::            Configuring Emms to use Last.fm.
-* Last.fm Radio::            Listening to music through Last.fm.
-* Last.fm Audioscrobbler::   Submitting music to Last.fm
 
 Extending Emms
 * New Player::               How to define a new player.
@@ -165,6 +160,8 @@ allows you to define your own in a very simple way.
 The way Emms works is easy to customize with your own code or by using
 `M-x customize'.
 
+
+
 @node Installation
 @chapter Installation
 
@@ -182,6 +179,8 @@ then in your ~/.emacs, you should do:
 @menu
 * Compiling Emms::      Compiling Emms into Byte-Code.
 @end menu
+
+
 
 @node Compiling Emms
 @section Compiling Emms
@@ -210,6 +209,8 @@ the appropriate permissions to do so on your system).
 
 Note that Emms is a light-weight and agile program, you can therefore
 run Emms just fine without byte compiling it.
+
+
 
 @node Simple Setup
 @chapter Simple Setup
@@ -279,6 +280,8 @@ It is also worth noting that you can write your own Emms setup
 functions like the above by looking at the existing function
 definitions in @file{emms-setup.el}.
 
+
+
 @node Configuration
 @chapter Configuration
 
@@ -323,6 +326,8 @@ Another way to change Emms variables is to use the M-x
 * Finding files and speed::     Finding files quickly or portably.
 @end menu
 
+
+
 @node Finding files and speed
 @section Finding files and speed
 
@@ -344,6 +349,8 @@ have GNU/find installed.
 
 The method Emms will use is defined in the customisable variable
 @var{emms-source-file-directory-tree-function}.
+
+
 
 @node Quickstart Guide
 @chapter Quickstart Guide
@@ -414,6 +421,8 @@ Now you can start exploring EMMS. It's probably best to begin with the
 basic commands (@pxref{Basic Commands}), the interactive playlists
 (@pxref{Interactive Playlists}), and the browser (@pxref{The Browser}).
 
+
+
 @node Getting Help
 @chapter Getting Help
 
@@ -429,6 +438,8 @@ If you are familiar with the Gmane service, there is a Gmane newsgroup
 which mirrors this mailing address at gmane.emacs.emms.user.
 
 Emms also has a website at @url{http://www.gnu.org/software/emms/}.
+
+
 
 @node Formats and Freedom
 @chapter Formats and Freedom
@@ -456,6 +467,8 @@ most widely supported lossless audio codec, and the only one that at
 once is non-proprietary, is unencumbered by patents and has the source
 code for a reference implementation freely available. For more
 information about FLAC, go to @url{http://flac.sourceforge.net/}.
+
+
 
 @node Basic Commands
 @chapter Basic Commands
@@ -551,6 +564,8 @@ non-nil, insert the description into the current buffer instead. This
 function uses @var{emms-show-format} to format the current track.
 @end defun
 
+
+
 @node The Core File
 @chapter The Core File
 
@@ -566,6 +581,8 @@ playing music, generating playlists and defining players.
 * Hooks::              Hooks for important Emms functions.
 * Core Functions::     Providing the basic functionality of Emms.
 @end menu
+
+
 
 @node User Variables
 @section User Variables
@@ -595,6 +612,8 @@ Function for describing an Emms track in a user-friendly way.
 A function that compares two tracks, and returns non-nil if the first
 track should be sorted before the second (see also @code{sort}).
 @end defopt
+
+
 
 @node Hooks
 @section Hooks
@@ -635,6 +654,8 @@ Hook run when a player is paused or resumed. Use
 @var{emms-player-paused-p} to find the current state.
 @end defopt
 
+
+
 @node Core Functions
 @section Core Functions
 
@@ -670,6 +691,10 @@ Toggle whether emms repeats the playlist after it is done. See
 Toggle whether emms repeats the current track. See
 @var{emms-repeat-track}.
 @end defun
+@defun emms-toggle-random-playlist
+Toggle whether emms plays the tracks randomly or sequentially. See
+@end defun
+@var{emms-random-playlist}.
 
 Some functions deal with the getting and setting track information.
 
@@ -728,6 +753,8 @@ Seek ten seconds backward.
 
 For more basic commands defined in the core file see @xref{Basic
 Commands}.
+
+
 
 @node Sources
 @chapter Sources
@@ -794,6 +821,8 @@ files) can play.
 Search for @var{regexp} and display the results in a locate buffer
 @end defun
 
+
+
 @node Simple Players
 @chapter Simple Players
 
@@ -822,6 +851,8 @@ the specified @var{params}.
 Sentinel for determining the end of process for the process @var{proc}
 and the sentinel string @var{str}.
 @end defun
+
+
 
 @node Playlists
 @chapter Playlists
@@ -856,6 +887,8 @@ format is specified by @var{emms-source-playlist-default-format}.
 
 The current Emms playlist buffer is stored in the variable
 @var{emms-playlist-buffer}.
+
+
 
 @node Track Information
 @chapter Track Information
@@ -904,6 +937,8 @@ track as argument.
 * Defining Info Methods::    Defining new info methods.
 @end menu
 
+
+
 @node Defining Info Methods
 @section Defining Info Methods
 
@@ -926,6 +961,8 @@ the right time to provide track info.
 @lisp
 (add-to-list 'emms-info-functions 'emms-info-ogginfo)
 @end lisp
+
+
 
 @node Interactive Playlists
 @chapter Interactive Playlists
@@ -1051,6 +1088,8 @@ with the playlist tracks. Text which is not a track is ignored by the
 program and can therefore be used to include titles and annotations
 within the playlist.
 
+
+
 @node Markable Playlists
 @chapter Markable Playlists
 
@@ -1135,6 +1174,8 @@ except it collects result of given function (that's why named with
 `mapcar').
 @end defun
 
+
+
 @node APE / FLAC Commands
 @chapter APE / FLAC Commands
 
@@ -1158,6 +1199,8 @@ Play next track from .cue file
 Play previous track from .cue file
 @end defun
 
+
+
 @node Bookmarks
 @chapter Bookmarks
 
@@ -1176,6 +1219,87 @@ respectively.
 To clear all of the bookmarks for the current track invoke @kbd{M-x
 emms-bookmarks-clear}.
 
+
+
+@node GNU FM
+@chapter GNU FM
+
+@cindex GNU FM
+
+@url{https://www.gnu.org/software/gnufm/, GNU FM} is free software for
+running music community websites. It was created for the music
+community site, @url{http://libre.fm/, Libre.fm}.
+
+Emms can send track information, and stream music from GNU FM servers
+using @file{emms-librefm-scrobbler.el} and
+@file{emms-librefm-stream.el}, respectively.
+
+Emms is configured by default to use @url{http://libre.fm/, Libre.fm},
+but can work with any GNU FM server by configuring the variable
+@var{emms-librefm-scrobbler-handshake-url} to the URL of the GNU FM
+server.
+
+Provide your credentials on the GNU FM server by setting the
+appropriate variables:
+
+@lisp
+(setq emms-librefm-scrobbler-username "USERNAME"
+      emms-librefm-scrobbler-password "PASSWORD")
+@end lisp
+
+
+@menu
+* Uploading Track Information:: How to submit listened track information.
+* GNU FM Streaming:: Streaming music from a GNU FM server.
+@end menu
+
+
+
+@node Uploading Track Information
+@section Uploading Track Information
+
+GNU FM servers, such as Libre.fm can optionally store a user's
+listening habits using information sent to the website's server from
+the Emms. By utilizing the records of users' listening habits, the
+website aims to be able to recommend music to users by analyzing their
+musical taste.
+
+Load the feature into Emms with:
+
+@lisp
+(require 'emms-librefm-scrobbler)
+@end lisp
+
+This feature can also be enabled via @xref{Simple Setup}, in the
+`emms-devel' setup level.
+
+Enable uploading the details of the tracks Emms plays to the GNU FM
+server with @kbd{emms-librefm-scrobbler-enable}. The track's details
+will be uploaded to the server when the track's playback ends. You can
+disable this behavior with @kbd{emms-librefm-scrobbler-disable}.
+
+
+
+
+@node GNU FM Streaming
+@section GNU FM Streaming
+
+If the GNU FM server provides a streaming music service you can take
+advantage of it by loading:
+
+@lisp
+(require 'emms-librefm-stream)
+@end lisp
+
+This feature can also be enabled via @xref{Simple Setup}, in the
+`emms-devel' setup level.
+
+Then invoke @kbd{emms-librefm-stream} and enter the URL of the station
+you wish to listen to, for example ``librefm://globaltags/Classical''.
+
+
+
+
 @node Extending Emms
 @chapter Extending Emms
 
@@ -1192,6 +1316,8 @@ customise it to your needs.
 * More Complex Player::      Example of a complex player using @command{mpg321}.
 @end menu
 
+
+
 @node New Player
 @section New Player
 
@@ -1202,6 +1328,8 @@ The file @file{emms-player-simple.el} defines some easy players to
 start with, but it shouldn't be hard to provide a function for your
 favourite player. We will start with an easy example that shows how
 we can use the @command{play} command under Unix to play our WAV files.
+
+
 
 @node Simple Player for `play'
 @section Simple Player for `play'
@@ -1252,6 +1380,8 @@ has to take one song as argument and stop after playing that
 particular song. For any other concept you will need to customise
 emms a bit more...
 
+
+
 @node More Complex Player
 @section More Complex Player
 
@@ -1296,10 +1426,10 @@ with the filename and set a filter.
 (defun emms-mpg321-remote-start ()
   (unless (get-process ``mpg321-remote'')
     (setq emms-mpg321-remote-process
-	  (start-process "mpg321-remote-process"
-			 "*mpg321*" "mpg321" "-R" "abc"))
+          (start-process "mpg321-remote-process"
+                         "*mpg321*" "mpg321" "-R" "abc"))
   (process-send-string "mpg321-remote-process"
-		       (concat "l " (emms-track-name track)))
+                       (concat "l " (emms-track-name track)))
   (set-process-filter emms-mpg321-remote-process 'emms-mpg321-remote-filter)))
 @end lisp
 @noindent
@@ -1340,6 +1470,8 @@ from @file{emms-player-simple.el}
 Now we have a ready player and we could add commands like
 @command{emms-mpg321-remote-pause} for example.
 
+
+
 @node The Browser
 @chapter The Browser
 
@@ -1367,6 +1499,8 @@ once so that the cache is fully populated.
 * Displaying Covers::     Displaying album covers in the browser interface.
 * Changing Looks::        Changing the tree structure, display format and faces.
 @end menu
+
+
 
 @node Browser Interface
 @section Browser Interface
@@ -1554,6 +1688,8 @@ Lookup the album using Pitchfork.
 Lookup the album using Wikipedia.
 @end table
 
+
+
 @node Filtering Tracks
 @section Filtering Tracks
 
@@ -1623,6 +1759,8 @@ Show all files that are not in the pending directory:
           (emms-browser-filter-only-dir "~/Media/pending") track)))))
 @end lisp
 
+
+
 @node Displaying Covers
 @section Displaying Covers
 
@@ -1650,6 +1788,8 @@ The medium and large images can be set as well.
 
 You can download an example @uref{http://repose.cx/cover_small.jpg,
 `no cover' image}.
+
+
 
 @node Changing Looks
 @section Changing Looks
@@ -1739,6 +1879,8 @@ They are in the format emms-browser-<type>-face, where type is one of
 initial "info-" part. For example, to change the artist face, type M-x
 @command{customize-face} @command{emms-browser-artist-face}.
 
+
+
 @node Sorting Playlists
 @chapter Sorting Playlists
 
@@ -1777,9 +1919,7 @@ Sort playlist by year in ascending order.
 Sort playlist by notes in ascending order.
 @end defun
 
-@defun emms-playlist-sort-by-score
-Sort emms playlist by score in descending order.
-@end defun
+
 
 @node Persistent Playlists
 @chapter Persistent Playlists
@@ -1822,6 +1962,8 @@ start playback afterwards, you can tweak this variable.
 If non-nil emms starts playing the current track after
 `emms-history-load' was invoked.  The default value is nil.
 @end defopt
+
+
 
 @node Editing Tracks
 @chapter Editing Tracks
@@ -1925,6 +2067,8 @@ Rename the file corresponding to track at point or all marked tracks
 according to the value of @code{emms-tag-editor-rename-format}.
 @end defun
 
+
+
 @node Emms Mode Line
 @chapter Emms Mode Line
 
@@ -1955,7 +2099,7 @@ To use this feature invoke:
 
 Note: `(emms-playing-time -1)' will disable emms-playing-time module
 completely, and is not recommended. (since some other emms modules may
-rely on it, such as `emms-lastfm.el')
+rely on it)
 
 Instead, to toggle displaying playing time on mode line, one could call
 `emms-playing-time-enable-display' and
@@ -1968,6 +2112,8 @@ Display playing time on mode line.
 @defun emms-playing-time-disable-display
 Remove playing time from mode line.
 @end defun
+
+
 
 @node Music Player Daemon
 @chapter Music Player Daemon
@@ -2026,9 +2172,9 @@ invoking:
 (add-to-list 'emms-player-list 'emms-player-mpd)
 @end lisp
 
-If you use absolute file names in your m3u playlists (which is most
-likely), make sure you set @var{emms-player-mpd-music-directory} to
-the value of "music_directory" from your MusicPD config.  There are
+Unless your MusicPD is configured to use absolute file names, you must
+set the emms-player-mpd-music-directory variable to the value of
+'music_directory' in your MusicPD config.  There are
 additional options available as well, but the defaults should be
 sufficient for most uses.
 
@@ -2086,6 +2232,8 @@ To activate this, add the following to your .emacs.
 (require 'emms-volume)
 (setq emms-volume-change-function 'emms-volume-mpd-change)
 @end lisp
+
+
 
 @node Lyrics
 @chapter Lyrics
@@ -2171,6 +2319,8 @@ Disable displaying Emms lyrics.
 Toggle displaying Emms lyrics.
 @end defun
 
+
+
 @node Volume
 @chapter Volume
 
@@ -2228,156 +2378,6 @@ by six steps of @code{emms-volume-change-amount}, you would simply type
 @kbd{C-c + + + + + +}.
 
 
-@node Last.fm
-@chapter Last.fm
-
-@cindex last.fm
-
-Last.fm is a popular commercial music streaming service. Last.fm
-allows a subscriber to listen to streaming music. Last.fm can also
-accept data as to what music is played locally. This information can
-be used by the Last.fm service. As usual the responsibility is on the
-user to decide how much information to share with third-parties.
-
-The emms-lastfm-client package, provided the file
-@file{emms-lastfm-client.el} provides native Last.fm support from
-within Emms.
-
-Emms does not provide a subscription to the Last.fm service, nor is it
-affiliated with the service in any way. There are restrictions on the
-use of this service. Quoting from @uref{http://www.last.fm/api/radio}:
-``Who can I stream radio to? Any API account can only stream radio to
-Last.fm's paid subscribers''.
-
-@menu
-* Last.fm Setup::            Configuring Emms to use Last.fm.
-* Last.fm Radio::            Listening to music through Last.fm
-* Last.fm Audioscrobbler::   Submitting music to Last.fm
-@end menu
-
-@node Last.fm Setup
-@section Last.fm Setup
-
-We've spoken to representatives from Last.fm and arrived at the
-following agreement: In order to be able to use the service while
-preserving the essential freedoms of the GPL each client must apply
-for their own API key from Last.fm.
-
-Here are the steps for getting authorization from Last.fm to stream
-music. Thankfully this only needs to be done once:
-
-@enumerate
-
-@item
-Complete steps 1 and 2 from
-@uref{http://www.last.fm/api/authentication} to get an API key and a
-secret key. Set the variables @var{emms-lastfm-client-api-key} and
-@var{emms-lastfm-client-api-secret-key} respectively.
-
-@item
-Invoke @kbd{M-x emms-lastfm-client-user-authorization}. On successful
-completion a browser window will open asking for confirmation to allow
-this application access to your Last.fm account. Confirm and close the
-browser.
-
-@item
-Invoke @kbd{M-x emms-lastfm-client-get-session}. On successful
-completion your permanent session key will be stored in
-@var{emms-lastfm-client-session-key-file}. As long as this value is
-accessible the authentication process need not be repeated.
-
-@end enumerate
-
-After successfully completing the above Emms should be authorized to
-access your Last.fm account.
-
-@node Last.fm Radio
-@section Last.fm Radio
-
-To show the currently streaming track invoke:
-@kbd{M-x emms-lastfm-client-show}.
-
-To display information and a photo of currently streaming artist:
-@kbd{M-x emms-lastfm-client-info}.
-
-There are three ratings you can submit while streaming audio from
-Last.fm: ``love''-ing a track, skipping to the next song (simply
-skipping also counts as a form of ``scrobbing'') and ``ban''-ing
-(which also skips).
-
-@kbd{M-x emms-lastfm-client-love-track}: ``love'' the currently
-streaming track.
-
-@kbd{M-x emms-lastfm-client-track-advance}: Skip to the next streaming
-track.
-
-@kbd{M-x emms-lastfm-client-ban-track}: ``ban'' the currently
-streaming track.
-
-Note that Last.fm streams cannot be paused or replayed. Doing so may
-cause Last.fm to suspend your account.
-
-There are a number of stations you can tune into:
-
-@kbd{M-x emms-lastfm-client-play-similar-artists}: Play
-Similar-Artists stream. You will be prompted to enter the name of the
-artist. The input will auto-complete from the Emms cache. If an artist
-is not in the Emms cache and has a name with spaces, use @kbd{C-q
-Space} to enter literal spaces.
-
-There are personal streams you can tune into:
-
-(at the time of writing these are in a state of flux as Last.fm
-depreciate old stations and bring in new ones; If a station which used
-to work doesn't anymore that is probably the reason. As Last.fm add
-and remove stations emms-lastfm-client will be updated accordingly)
-
-@kbd{M-x emms-lastfm-client-play-library}: Your Last.fm Library.
-
-@kbd{M-x emms-lastfm-client-play-loved}: Your ``loved'' tracks.
-
-@kbd{M-x emms-lastfm-client-play-recommended}: Your ``recommended'' tracks.
-
-@kbd{M-x emms-lastfm-client-play-mix}: Your ``mix'' radio.
-
-@kbd{M-x emms-lastfm-client-play-neighborhood}: Your ``neighborhood''.
-
-You can use similar commands to tune into other people's streams. For
-each of these commands you will be prompted for the Last.fm username
-of the person whose radio you wish to hear.
-
-@kbd{M-x emms-lastfm-client-play-user-library}: A Last.fm user's
-Library.
-
-@kbd{M-x emms-lastfm-client-play-user-loved}: A Last.fm user's
-``loved'' tracks.
-
-@kbd{M-x emms-lastfm-client-play-user-neighborhood}: A Last.fm user's
-``neighborhood''.
-
-@node Last.fm Audioscrobbler
-@section Last.fm Audioscrobbler
-
-Emms can submit the tracks you play to your Last.fm profile. Assuming
-you have obtained a Last.fm api key, as explained in the chapter
-@xref{Last.fm Setup}, all the audioscrobbler needs is your username in
-@var{emms-lastfm-client-username}. You can enter it with @kbd{M-x
-customize-group RET emms-lastfm}.
-
-@kbd{M-x emms-lastfm-scrobbler-enable} turns on audioscrobbling.
-
-To turn it off use @kbd{M-x emms-lastfm-scrobbler-disable}.
-
-To turn on Emms' audioscrobber in your .emacs file add:
-@lisp
-(require 'emms-lastfm-client)
-
-(setq emms-lastfm-client-username "your-lastfm-username")
-(setq emms-lastfm-client-api-key "your-lastfm-api-key")
-(setq emms-lastfm-client-api-secret-key "your-lastfm-api-secret-key")
-
-(emms-lastfm-scrobbler-enable)
-@end lisp
 
 
 @node Streaming Audio
@@ -2407,13 +2407,6 @@ default, you are free to remove any or all of them and add your
 own.@footnote{If you enjoy a particular streaming audio station on the
 Web and think that it belongs in the default list, please send us a
 link and we will gladly add it!}
-
-If you want to play Last.fm streams, invoke the following and use the
-``lastfm'' type when adding a bookmark to a Last.fm stream.
-
-@lisp
-(require 'emms-lastfm)
-@end lisp
 
 The following is a list of the key-bindings for the emms-streams
 interface:
@@ -2473,17 +2466,25 @@ bookmark under point. Note that this will only work if the
 @include gpl.texi
 @include fdl.texi
 
+
+
 @node Concept Index
 @unnumbered Concept Index
 @printindex cp
+
+
 
 @node Function Index
 @unnumbered Function Index
 @printindex fn
 
+
+
 @node Variable Index
 @unnumbered Variable Index
 @printindex vr
+
+
 
 @node Keybinding Index
 @unnumbered Keybinding Index
